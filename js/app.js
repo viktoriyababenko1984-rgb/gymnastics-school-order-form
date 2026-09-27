@@ -308,5 +308,24 @@
       if (e.target.id === 'confirm-modal') closeConfirmation();
     });
     document.addEventListener('keydown', trapFocus);
+
+    // Шапка сливается с голубым блоком вверху страницы и отделяется при прокрутке
+    const header = document.querySelector('.header');
+    let ticking = false;
+    const syncHeader = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 8);
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(syncHeader);
+        }
+      },
+      { passive: true },
+    );
+    syncHeader();
   });
 })();

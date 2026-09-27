@@ -79,7 +79,12 @@ button { cursor: pointer; }
   position: sticky; top: 0; z-index: 30;
   background: var(--blue);
   color: var(--white);
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.25s ease, border-radius 0.25s ease;
+}
+/* После прокрутки шапка «отрывается» от голубого блока: скруглённый низ и мягкая тень */
+.header.is-scrolled {
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 8px 24px rgba(0, 107, 149, 0.22);
 }
 .header__inner {
   min-height: var(--header-h);
@@ -408,7 +413,8 @@ select.field__input {
   .brand__logo { width: 56px; height: 56px; }
   .brand__name { font-size: 30px; }
   .brand__tagline { font-size: 13px; }
-  .hero { padding: 36px 0 56px; margin: 0 var(--gutter); border-radius: 0 0 40px 40px; }
+  .hero { padding: 36px 0 56px; border-radius: 0 0 48px 48px; }
+  .header.is-scrolled { border-radius: 0 0 32px 32px; }
   .hero__inner { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
   .hero__title { font-size: clamp(56px, 7.5vw, 92px); }
   .hero__text { font-size: 18px; }
