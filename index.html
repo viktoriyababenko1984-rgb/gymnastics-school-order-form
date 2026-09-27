@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Магазин клубной формы — СКАЗКА, клуб эстетической гимнастики</title>
+  <meta name="description" content="Клубная форма и атрибутика спортивного клуба эстетической гимнастики «СКАЗКА»: лонгсливы, леггинсы, костюмы, рюкзаки. Заказ с получением в филиале клуба.">
+  <meta name="theme-color" content="#1587B8">
+  <link rel="icon" href="images/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/data.js" defer></script>
+  <script src="js/storage.js" defer></script>
+  <script src="js/cart.js" defer></script>
+  <script src="js/form.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#catalog">Перейти к каталогу</a>
+
+  <header class="header">
+    <div class="header__inner container">
+      <a class="brand" href="https://skazka-ufa.ru/" target="_blank" rel="noopener">
+        <img class="brand__logo" src="images/logo.png" alt="Логотип клуба СКАЗКА" width="48" height="48"
+             onerror="this.hidden=true">
+        <span class="brand__text">
+          <span class="brand__name">СКАЗКА</span>
+          <span class="brand__tagline">Спортивный клуб эстетической гимнастики</span>
+        </span>
+      </a>
+      <button type="button" class="header__cart" id="header-cart" aria-label="Корзина пуста">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5.2 4l.4 2H20a1 1 0 0 1 1 1.2l-1.4 7A2 2 0 0 1 17.6 16H8.1a2 2 0 0 1-2-1.6L4 3.8A1 1 0 0 0 3 3H2V1h1a3 3 0 0 1 2.9 2.4Z"/>
+        </svg>
+        <span class="header__badge" id="header-cart-badge" hidden>0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro container">
+      <h1 class="intro__title">Магазин клубной формы</h1>
+      <p class="intro__text">Выберите товары и размер, оформите заказ — администратор клуба свяжется с вами.</p>
+    </section>
+
+    <section class="catalog container" id="catalog" aria-labelledby="catalog-title" tabindex="-1">
+      <h2 class="section-title" id="catalog-title">Каталог</h2>
+      <div class="catalog__grid" id="catalog-grid"></div>
+    </section>
+
+    <section class="checkout container" id="checkout" aria-label="Оформление заказа">
+      <div class="panel cart" aria-labelledby="cart-title">
+        <h2 class="section-title" id="cart-title">Ваш заказ <span class="cart__count" id="cart-count"></span></h2>
+        <div class="cart__empty" id="cart-empty">
+          <p>Корзина пуста. Добавьте товары из каталога.</p>
+          <a class="link" href="#catalog">Перейти к каталогу</a>
+        </div>
+        <ul class="cart__list" id="cart-list"></ul>
+        <div class="cart__footer" id="cart-footer" hidden>
+          <span>Итого:</span>
+          <strong class="cart__total" id="cart-total">0 ₽</strong>
+        </div>
+      </div>
+
+      <form class="panel order-form" id="order-form" novalidate aria-labelledby="form-title">
+        <h2 class="section-title" id="form-title">Данные для заказа</h2>
+
+        <div class="field">
+          <label class="field__label" for="childName">Фамилия и имя ребёнка</label>
+          <input class="field__input" id="childName" name="childName" type="text" maxlength="100"
+                 autocomplete="off" required aria-describedby="childName-error" placeholder="Иванова Мария">
+          <p class="field__error" id="childName-error" data-error-for="childName"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="phone">Номер телефона родителя</label>
+          <input class="field__input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
+                 required aria-describedby="phone-error" placeholder="+7 (___) ___-__-__">
+          <p class="field__error" id="phone-error" data-error-for="phone"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="branch">Филиал</label>
+          <select class="field__input" id="branch" name="branch" required aria-describedby="branch-error">
+            <option value="" disabled selected>Выберите филиал...</option>
+          </select>
+          <p class="field__error" id="branch-error" data-error-for="branch"></p>
+        </div>
+
+        <div class="field field--check">
+          <label class="check">
+            <input type="checkbox" id="consent" name="consent" required aria-describedby="consent-error">
+            <span>Я согласен(на) на обработку персональных данных
+              (<a class="link" href="#" data-policy-link>политика конфиденциальности</a>)</span>
+          </label>
+          <p class="field__error" id="consent-error" data-error-for="consent"></p>
+        </div>
+
+        <!-- Ловушка для ботов (NFR-17): люди это поле не видят и не заполняют -->
+        <div class="hp" aria-hidden="true">
+          <label for="website">Не заполняйте это поле</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="submit-error" id="submit-error" role="alert" hidden>
+          <p data-error-text></p>
+          <button type="button" class="btn btn--outline" id="retry-btn">Повторить</button>
+        </div>
+
+        <button type="submit" class="btn btn--accent btn--block" id="submit-btn" disabled>
+          <span class="spinner" aria-hidden="true"></span>
+          <span data-submit-label>Оформить заказ</span>
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <a class="footer__link" href="https://skazka-ufa.ru/" target="_blank" rel="noopener">skazka-ufa.ru</a>
+      <p>© <span id="year"></span> СКАЗКА — спортивный клуб эстетической гимнастики</p>
+    </div>
+  </footer>
+
+  <div class="modal" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" hidden>
+    <div class="modal__box">
+      <div class="modal__icon" aria-hidden="true">✓</div>
+      <h2 class="modal__title" id="confirm-title">Спасибо! Заказ принят</h2>
+      <div class="modal__body" id="confirm-body"></div>
+      <button type="button" class="btn btn--accent btn--block" id="confirm-close">Вернуться в магазин</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <div class="visually-hidden" id="live-region" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
