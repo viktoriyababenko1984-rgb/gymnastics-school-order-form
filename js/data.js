@@ -4,7 +4,7 @@
   'use strict';
 
   // URL веб-приложения Apps Script (ТЗ, раздел 6.6, шаг 5).
-  const API_URL = 'https://script.google.com/macros/s/PASTE_DEPLOYMENT_ID_HERE/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycby0xSvcSB0m2wvJkHmZUmVZB-7fNg1dvdqmXlRKz3SiwED6p1pX6IhiSnstNik8vLHBqw/exec';
 
   // Ссылка на политику обработки персональных данных (ТЗ, раздел 12). Пусто — выводится текст без ссылки.
   const POLICY_URL = '';
