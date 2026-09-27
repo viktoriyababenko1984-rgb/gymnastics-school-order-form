@@ -328,6 +328,7 @@ select.field__input {
 }
 .field__input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 3px rgba(0, 176, 245, 0.2); }
 .field__input[aria-invalid="true"] { border-color: var(--error); }
+.field__hint { margin: 6px 0 0; font-size: 13px; font-weight: 600; color: var(--blue-deep); }
 .field__error { margin: 5px 0 0; font-size: 13px; font-weight: 600; color: var(--error); }
 .field__error:empty { display: none; }
 

@@ -32,13 +32,26 @@
     { id: 13, name: 'Брюки женские синие «Love gymnastics»', price: 3300, sizes: ['S', 'M', 'L'] },
   ].map((p) => Object.freeze({ ...p, sizes: Object.freeze(p.sizes), image: `images/${p.id}.jpg` }));
 
+  // Названия и адреса — из документа заказчика «Названия филиалов» (Google Drive).
+  // В таблицу заявок (колонка «Филиал») пишется только название.
   const BRANCHES = [
-    'ЦСП Мустафина', 'Затон', 'Садик 144', 'Дёма', 'ШВСМ', 'Башлицей 2',
-    'Кузнецовский Затон', 'Медунивер', 'Новошкола', 'Динамо',
-    'Центр гимнастики', 'Дворец борьбы', 'Нефтяник',
-  ];
+    { name: 'ЦСП Мустафина', address: 'Менделеева, 158/4' },
+    { name: 'Затон', address: 'Проспект Дружбы народов, 47' },
+    { name: 'Садик 144', address: 'Коммунистическая, 22/2' },
+    { name: 'Дёма', address: 'Генерала Ишбулатова, 8/3' },
+    { name: 'ШВСМ', address: 'Султанова, 24/1' },
+    { name: 'Башлицей 2', address: 'Гафури, 103А' },
+    { name: 'Кузнецовский Затон', address: 'Просвещения, 2' },
+    { name: 'Медунивер', address: 'Репина, 6' },
+    { name: 'Новошкола', address: 'Гоголя, 63/2' },
+    { name: 'Динамо', address: 'Карла Маркса, 2а' },
+    { name: 'Центр гимнастики', address: 'Авроры, 12' },
+    { name: 'Дворец борьбы', address: 'Мусы Гареева, 5' },
+    { name: 'Нефтяник', address: 'Комарова, 9' },
+  ].map((b) => Object.freeze({ ...b, label: `${b.name} — ${b.address}` }));
 
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
+  const branchByName = new Map(BRANCHES.map((b) => [b.name, b]));
 
   window.Shop = window.Shop || {};
   Object.assign(window.Shop, {
@@ -49,6 +62,7 @@
     MAX_QTY: 10,
     REQUEST_TIMEOUT_MS: 15000,
     getProduct: (id) => byId.get(Number(id)),
+    getBranch: (name) => branchByName.get(name),
     formatPrice: (n) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} ₽`,
   });
 })();

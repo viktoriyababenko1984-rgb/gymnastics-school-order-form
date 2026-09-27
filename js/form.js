@@ -4,7 +4,7 @@
   'use strict';
 
   const Shop = window.Shop;
-  const { storage, cart, BRANCHES } = Shop;
+  const { storage, cart, BRANCHES, getBranch } = Shop;
   const DRAFT_KEY = 'skazka_form_v1';
   const NAME_RE = /^[A-Za-zА-Яа-яЁё]+(?:[ -][A-Za-zА-Яа-яЁё]+)*$/;
 
@@ -45,7 +45,7 @@
       return d.length === 11 && d[0] === '7' ? '' : 'Введите номер в формате +7 (XXX) XXX-XX-XX';
     },
     branch(v) {
-      return BRANCHES.includes(v) ? '' : 'Выберите филиал';
+      return getBranch(v) ? '' : 'Выберите филиал';
     },
     consent(_v, el) {
       return el.checked ? '' : 'Необходимо согласие на обработку персональных данных';
@@ -100,7 +100,7 @@
     if (!d) return;
     if (typeof d.childName === 'string') fields.childName.value = d.childName.slice(0, 100);
     if (typeof d.phone === 'string') fields.phone.value = formatPhone(d.phone);
-    if (BRANCHES.includes(d.branch)) fields.branch.value = d.branch;
+    if (getBranch(d.branch)) fields.branch.value = d.branch;
   }
 
   /* ---------- Отправка ---------- */
@@ -203,7 +203,7 @@
     const summary = {
       childName: payload.customer.childName,
       phone: formatPhone(payload.customer.phone),
-      branch: payload.customer.branch,
+      branch: getBranch(payload.customer.branch).label,
       lines: cart.lines(),
       clientTotal: payload.clientTotal,
     };
@@ -246,7 +246,17 @@
       consent: form.elements.consent,
     };
 
-    BRANCHES.forEach((b) => fields.branch.add(new Option(b, b)));
+    BRANCHES.forEach((b) => fields.branch.add(new Option(b.label, b.name)));
+
+    // Полный адрес под списком: в закрытом select на узком экране он может не поместиться.
+    const addressHint = document.getElementById('branch-address');
+    const showAddress = () => {
+      const b = getBranch(fields.branch.value);
+      addressHint.textContent = b ? `Адрес филиала: ${b.address}` : '';
+      addressHint.hidden = !b;
+    };
+    fields.branch.addEventListener('change', showAddress);
+    form.addEventListener('reset', () => setTimeout(showAddress));
 
     const policy = form.querySelector('[data-policy-link]');
     if (Shop.POLICY_URL) {
@@ -257,6 +267,7 @@
       policy.replaceWith(document.createTextNode(policy.textContent));
     }
     restoreDraft();
+    showAddress();
 
     fields.phone.addEventListener('input', () => {
       fields.phone.value = formatPhone(fields.phone.value);
