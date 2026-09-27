@@ -35,7 +35,7 @@ def to_square_jpeg(src: Path, dst: Path) -> int:
         img = bg
     else:
         img = img.convert("RGB")
-    img = ImageOps.pad(img, (SIZE, SIZE), color=(255, 255, 255))
+    img = ImageOps.fit(img, (SIZE, SIZE), Image.LANCZOS)  # почти квадратные фото — обрезка по центру
     for quality in (82, 76, 70, 64, 58):
         img.save(dst, "JPEG", quality=quality, optimize=True, progressive=True)
         if dst.stat().st_size <= MAX_BYTES:
