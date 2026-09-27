@@ -4,7 +4,16 @@
 
   const Shop = window.Shop;
   const { PRODUCTS, cart, formatPrice, MAX_QTY } = Shop;
-  const PLACEHOLDER = 'images/placeholder.svg';
+  // Заглушка встроена в код: показывается, даже если не загрузился и сам файл заглушки (EC-18)
+  const PLACEHOLDER =
+    'data:image/svg+xml;charset=utf-8,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#E5F7FE"/>' +
+        '<g fill="none" stroke="#00B0F5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".7">' +
+        '<rect x="110" y="120" width="180" height="150" rx="16"/><circle cx="160" cy="170" r="18"/>' +
+        '<path d="m120 255 55-55 40 40 25-25 50 50"/></g>' +
+        '<text x="200" y="320" font-family="Arial,sans-serif" font-size="22" fill="#006B95" text-anchor="middle">Фото скоро появится</text></svg>',
+    );
 
   /** Короткий помощник для создания элементов. Текст всегда через textContent (NFR-14). */
   function el(tag, attrs, ...children) {
@@ -96,6 +105,32 @@
       });
     }
 
+    // Цена и (для стартового набора) льготное условие
+    const priceEl = el('p', { className: 'card__price' }, el('span', { className: 'card__price-now', text: formatPrice(p.price) }));
+    let promo = null;
+    let promoBox = null;
+    if (p.discount) {
+      const oldPrice = el('s', { className: 'card__price-old', text: formatPrice(p.price), hidden: true });
+      priceEl.append(oldPrice);
+      promo = el('input', { type: 'checkbox', className: 'promo__input' });
+      promoBox = el(
+        'div',
+        { className: 'promo' },
+        el(
+          'p',
+          { className: 'promo__badge' },
+          el('strong', { text: formatPrice(p.discount.price) }),
+          ` ${p.discount.condition}`,
+        ),
+        el('label', { className: 'promo__check' }, promo, el('span', { text: 'Первая неделя занятий' })),
+      );
+      promo.addEventListener('change', () => {
+        priceEl.firstChild.textContent = formatPrice(promo.checked ? p.discount.price : p.price);
+        priceEl.classList.toggle('is-promo', promo.checked);
+        oldPrice.hidden = !promo.checked;
+      });
+    }
+
     const btn = el('button', { type: 'button', className: 'btn btn--dark card__btn', text: 'В корзину' });
     let resetTimer;
     btn.addEventListener('click', () => {
@@ -105,7 +140,7 @@
         select.focus();
         return;
       }
-      const result = cart.add(p.id, select ? select.value : null);
+      const result = cart.add(p.id, select ? select.value : null, Boolean(promo && promo.checked));
       if (result === 'max') {
         toast(`Максимум ${MAX_QTY} шт. одной позиции`);
         return;
@@ -128,7 +163,8 @@
         'div',
         { className: 'card__body' },
         el('h3', { className: 'card__title', text: p.name }),
-        el('p', { className: 'card__price', text: formatPrice(p.price) }),
+        priceEl,
+        promoBox,
         selectWrap,
         err,
         btn,
@@ -154,7 +190,8 @@
         { className: 'cart-item__info' },
         el('p', { className: 'cart-item__name', text: p.name }),
         size ? el('p', { className: 'cart-item__meta', text: `Размер: ${size}` }) : null,
-        el('p', { className: 'cart-item__meta', text: `${formatPrice(p.price)} × ${qty}` }),
+        line.discount ? el('p', { className: 'cart-item__promo', text: `Цена: ${p.discount.condition}` }) : null,
+        el('p', { className: 'cart-item__meta', text: `${formatPrice(line.price)} × ${qty}` }),
         el(
           'div',
           { className: 'cart-item__row' },
@@ -236,7 +273,9 @@
     const modal = document.getElementById('confirm-modal');
     const body = document.getElementById('confirm-body');
     const rows = s.lines.map((l) =>
-      el('li', { text: `${l.product.name}${l.size ? `, ${l.size}` : ''} — ${l.qty} шт.` }),
+      el('li', {
+        text: `${l.product.name}${l.size ? `, ${l.size}` : ''}${l.discount ? ` (${l.product.discount.label.toLowerCase()})` : ''} — ${l.qty} шт.`,
+      }),
     );
     const parts = [
       el('p', {}, el('span', { className: 'muted', text: 'Ребёнок: ' }), s.childName),

@@ -37,7 +37,9 @@ const CATALOG = {
     sizes: ['104-110', '116-122', '128-134', '152'] },
   6: { name: 'Шорты черные «Solo»', price: 950,
     sizes: ['32 (128-134)', '34 (134-140)', '36 (140-146)', '38 (146-152)', '40 (152-158)', '42 (158-164)'] },
-  7: { name: 'Стартовый набор (рюкзак, бутылочка для воды, скакалка, «лист успеха»)', price: 2490, sizes: [] },
+  7: { name: 'Стартовый набор (рюкзак, бутылочка для воды, скакалка, «лист успеха»)', price: 2490, sizes: [],
+    // Льготная цена при заказе в первую неделю занятий; в колонку «Размер» пишется пометка label
+    discount: { price: 2190, label: 'Первая неделя занятий' } },
   8: { name: 'Рюкзак «Сказка»', price: 1590, sizes: [] },
   9: { name: 'Бутылочка для воды «Сказка» 400 мл', price: 790, sizes: [] },
   10: { name: 'Скакалка 3 метра', price: 590, sizes: [] },
@@ -90,16 +92,18 @@ function doPost(e) {
     // СТРОГИЙ ПОРЯДОК КОЛОНОК A–I (ТЗ, раздел 6.3)
     const rows = mergeItems(data.items).map(function (it) {
       const p = CATALOG[it.productId];
+      const price = it.discount ? p.discount.price : p.price;
+      const sizeCell = it.discount ? p.discount.label : it.size ? "'" + it.size : '—';
       return [
         now,                              // A Дата
         c.branch,                         // B Филиал
         safe(childName),                  // C ФИ ребенка
         p.name,                           // D Наименование товара
-        it.size ? "'" + it.size : '—',    // E Размер (текстом, чтобы не стал датой)
+        sizeCell,                         // E Размер (текстом, чтобы не стал датой) / пометка льготы
         it.qty,                           // F Кол-во
-        p.price,                          // G Цена (за единицу)
+        price,                            // G Цена (за единицу)
         "'" + c.phone,                    // H Номер телефона родителя
-        p.price * it.qty,                 // I Сумма (Кол-во × Цена)
+        price * it.qty,                   // I Сумма (Кол-во × Цена)
       ];
     });
 
@@ -152,6 +156,9 @@ function validate(data) {
     } else if (it.size !== null && it.size !== undefined && it.size !== '') {
       errors.push('У товара «' + p.name + '» нет размеров');
     }
+    if (it.discount !== undefined && it.discount !== false && !(it.discount === true && p.discount)) {
+      errors.push('Для товара «' + p.name + '» льготная цена не предусмотрена');
+    }
     if (!(Number.isInteger(it.qty) && it.qty >= 1 && it.qty <= MAX_QTY)) {
       errors.push('Количество для «' + p.name + '» должно быть от 1 до ' + MAX_QTY);
     }
@@ -165,9 +172,10 @@ function mergeItems(items) {
   const order = [];
   items.forEach(function (it) {
     const size = CATALOG[it.productId].sizes.length ? it.size : null;
-    const key = it.productId + '|' + (size || '');
+    const discount = it.discount === true;
+    const key = it.productId + '|' + (size || '') + '|' + (discount ? 'd' : '');
     if (!map[key]) {
-      map[key] = { productId: it.productId, size: size, qty: 0 };
+      map[key] = { productId: it.productId, size: size, discount: discount, qty: 0 };
       order.push(key);
     }
     map[key].qty = Math.min(MAX_QTY, map[key].qty + it.qty);

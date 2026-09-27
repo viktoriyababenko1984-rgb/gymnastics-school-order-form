@@ -8,11 +8,15 @@
   let items = [];
   const listeners = [];
 
-  const keyOf = (productId, size) => `${productId}|${size ?? ''}`;
+  const keyOf = (productId, size, discount) => `${productId}|${size ?? ''}|${discount ? 'd' : ''}`;
+
+  /** Цена за единицу: льготная, если позиция добавлена со льготным условием. */
+  const unitPrice = (p, discount) => (discount && p.discount ? p.discount.price : p.price);
 
   function isValidItem(it) {
     const p = it && getProduct(it.productId);
     if (!p) return false;
+    if (it.discount && !p.discount) return false;
     if (p.sizes.length) return typeof it.size === 'string' && p.sizes.includes(it.size);
     return it.size === null || it.size === undefined || it.size === '';
   }
@@ -23,8 +27,9 @@
     const raw = saved && Array.isArray(saved.items) ? saved.items : [];
     const valid = raw.filter(isValidItem).map((it) => {
       const size = getProduct(it.productId).sizes.length ? it.size : null;
+      const discount = Boolean(it.discount);
       const qty = Math.min(MAX_QTY, Math.max(1, parseInt(it.qty, 10) || 1));
-      return { key: keyOf(it.productId, size), productId: Number(it.productId), size, qty };
+      return { key: keyOf(it.productId, size, discount), productId: Number(it.productId), size, discount, qty };
     });
     items = valid;
     save();
@@ -37,14 +42,14 @@
   }
 
   /** @returns {'added'|'max'} */
-  function add(productId, size) {
-    const key = keyOf(productId, size);
+  function add(productId, size, discount = false) {
+    const key = keyOf(productId, size, discount);
     const existing = items.find((it) => it.key === key);
     if (existing) {
       if (existing.qty >= MAX_QTY) return 'max';
       existing.qty += 1;
     } else {
-      items.push({ key, productId, size: size || null, qty: 1 });
+      items.push({ key, productId, size: size || null, discount: Boolean(discount), qty: 1 });
     }
     save();
     return 'added';
@@ -70,7 +75,8 @@
   function lines() {
     return items.map((it) => {
       const p = getProduct(it.productId);
-      return { ...it, product: p, sum: p.price * it.qty };
+      const price = unitPrice(p, it.discount);
+      return { ...it, product: p, price, sum: price * it.qty };
     });
   }
 
@@ -87,7 +93,8 @@
     count,
     total,
     isEmpty: () => items.length === 0,
-    payloadItems: () => items.map(({ productId, size, qty }) => ({ productId, size, qty })),
+    payloadItems: () =>
+      items.map(({ productId, size, discount, qty }) => (discount ? { productId, size, qty, discount } : { productId, size, qty })),
     onChange: (fn) => listeners.push(fn),
   };
 })();

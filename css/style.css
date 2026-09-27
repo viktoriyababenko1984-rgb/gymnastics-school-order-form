@@ -233,6 +233,18 @@ button { cursor: pointer; }
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .card__price { margin: auto 0 0; font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--blue-deep); }
+.card__price.is-promo .card__price-now { color: var(--pink-dark); }
+.card__price-old { margin-left: 8px; font-size: 15px; font-weight: 600; color: var(--muted); }
+
+.promo {
+  display: grid; gap: 8px; padding: 10px 12px;
+  border-radius: var(--radius-sm); background: #FFF0F6; border: 1.5px dashed #FFB3CF;
+}
+.promo__badge { margin: 0; font-size: 13px; line-height: 1.35; color: var(--ink); }
+.promo__badge strong { color: var(--pink-dark); font-size: 15px; font-weight: 800; }
+.promo__check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; font-weight: 600; line-height: 1.35; cursor: pointer; }
+.promo__input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--pink); }
+.cart-item__promo { margin: 0; font-size: 13px; font-weight: 700; color: var(--pink-dark); }
 .card__select {
   width: 100%; min-height: 44px; padding: 8px 32px 8px 12px;
   border: 1.5px solid var(--line); border-radius: var(--radius-sm);
