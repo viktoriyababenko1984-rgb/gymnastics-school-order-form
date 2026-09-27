@@ -70,6 +70,7 @@
   function renderCard(p) {
     const errId = `size-err-${p.id}`;
     let select = null;
+    let selectWrap = null;
     let err = null;
 
     if (p.sizes.length) {
@@ -79,8 +80,17 @@
         el('option', { value: '', disabled: true, selected: true, text: 'Выберите размер...' }),
         p.sizes.map((s) => el('option', { value: s, text: s })),
       );
+      // Видимая подсказка поверх списка: на узких карточках переносится на 2 строки,
+      // а сам select остаётся 16px (иначе iOS увеличивает страницу при фокусе).
+      selectWrap = el(
+        'div',
+        { className: 'select' },
+        select,
+        el('span', { className: 'select__ph', 'aria-hidden': 'true', text: 'Выберите размер...' }),
+      );
       err = el('p', { className: 'card__error', id: errId, text: '' });
       select.addEventListener('change', () => {
+        selectWrap.classList.toggle('has-value', Boolean(select.value));
         select.removeAttribute('aria-invalid');
         err.textContent = '';
       });
@@ -119,7 +129,7 @@
         { className: 'card__body' },
         el('h3', { className: 'card__title', text: p.name }),
         el('p', { className: 'card__price', text: formatPrice(p.price) }),
-        select,
+        selectWrap,
         err,
         btn,
       ),
@@ -206,6 +216,11 @@
     document.getElementById('cart-total').textContent = formatPrice(cart.total());
 
     const badge = document.getElementById('header-cart-badge');
+    if (count > Number(badge.textContent)) {
+      badge.classList.remove('is-bump');
+      void badge.offsetWidth; // перезапуск анимации
+      badge.classList.add('is-bump');
+    }
     badge.textContent = String(count);
     badge.hidden = count === 0;
     document

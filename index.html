@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Магазин клубной формы — СКАЗКА, клуб эстетической гимнастики</title>
   <meta name="description" content="Клубная форма и атрибутика спортивного клуба эстетической гимнастики «СКАЗКА»: лонгсливы, леггинсы, костюмы, рюкзаки. Заказ с получением в филиале клуба.">
-  <meta name="theme-color" content="#1587B8">
+  <meta name="theme-color" content="#00B0F5">
   <link rel="icon" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@600;700&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/data.js" defer></script>
   <script src="js/storage.js" defer></script>
@@ -20,7 +23,7 @@
   <header class="header">
     <div class="header__inner container">
       <a class="brand" href="https://skazka-ufa.ru/" target="_blank" rel="noopener">
-        <img class="brand__logo" src="images/logo.png" alt="Логотип клуба СКАЗКА" width="48" height="48"
+        <img class="brand__logo" src="images/logo.png" alt="Логотип клуба СКАЗКА" width="56" height="56"
              onerror="this.hidden=true">
         <span class="brand__text">
           <span class="brand__name">СКАЗКА</span>
@@ -28,7 +31,7 @@
         </span>
       </a>
       <button type="button" class="header__cart" id="header-cart" aria-label="Корзина пуста">
-        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
           <path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5.2 4l.4 2H20a1 1 0 0 1 1 1.2l-1.4 7A2 2 0 0 1 17.6 16H8.1a2 2 0 0 1-2-1.6L4 3.8A1 1 0 0 0 3 3H2V1h1a3 3 0 0 1 2.9 2.4Z"/>
         </svg>
         <span class="header__badge" id="header-cart-badge" hidden>0</span>
@@ -37,87 +40,118 @@
   </header>
 
   <main>
-    <section class="intro container">
-      <h1 class="intro__title">Магазин клубной формы</h1>
-      <p class="intro__text">Выберите товары и размер, оформите заказ — администратор клуба свяжется с вами.</p>
+    <section class="hero" aria-labelledby="hero-title">
+      <span class="hero__blob hero__blob--1" aria-hidden="true"></span>
+      <span class="hero__blob hero__blob--2" aria-hidden="true"></span>
+      <span class="hero__blob hero__blob--3" aria-hidden="true"></span>
+      <div class="hero__inner container">
+        <div class="hero__content">
+          <h1 class="hero__title" id="hero-title">
+            <span class="hero__line">Магазин</span>
+            <span class="hero__line hero__line--dark">клубной формы</span>
+          </h1>
+          <p class="hero__text">Форма и аксессуары для занятий эстетической гимнастикой. Оформите заказ онлайн&nbsp;— администратор клуба свяжется с вами.</p>
+          <a class="btn btn--white btn--pill" href="#catalog">Выбрать форму</a>
+        </div>
+        <figure class="hero__promo">
+          <img src="images/7.jpg" alt="Стартовый набор: рюкзак, бутылочка для воды, скакалка и «лист успеха»"
+               width="612" height="612" onerror="this.closest('figure').hidden=true">
+        </figure>
+      </div>
     </section>
 
     <section class="catalog container" id="catalog" aria-labelledby="catalog-title" tabindex="-1">
-      <h2 class="section-title" id="catalog-title">Каталог</h2>
+      <div class="section-head">
+        <h2 class="section-title" id="catalog-title">Каталог</h2>
+        <p class="section-sub">13 товаров · выберите размер и добавьте в корзину</p>
+      </div>
       <div class="catalog__grid" id="catalog-grid"></div>
     </section>
 
-    <section class="checkout container" id="checkout" aria-label="Оформление заказа">
-      <div class="panel cart" aria-labelledby="cart-title">
-        <h2 class="section-title" id="cart-title">Ваш заказ <span class="cart__count" id="cart-count"></span></h2>
-        <div class="cart__empty" id="cart-empty">
-          <p>Корзина пуста. Добавьте товары из каталога.</p>
-          <a class="link" href="#catalog">Перейти к каталогу</a>
-        </div>
-        <ul class="cart__list" id="cart-list"></ul>
-        <div class="cart__footer" id="cart-footer" hidden>
-          <span>Итого:</span>
-          <strong class="cart__total" id="cart-total">0 ₽</strong>
+    <section class="checkout container" id="checkout" aria-labelledby="checkout-title">
+      <div class="checkout__panel">
+        <h2 class="checkout__title" id="checkout-title">Оформление заказа</h2>
+
+        <div class="checkout__grid">
+          <div class="cart" aria-labelledby="cart-title">
+            <h3 class="block-title" id="cart-title">Ваш заказ <span class="cart__count" id="cart-count"></span></h3>
+            <div class="cart__empty" id="cart-empty">
+              <svg class="cart__empty-icon" viewBox="0 0 24 24" width="40" height="40" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5.2 4l.4 2H20a1 1 0 0 1 1 1.2l-1.4 7A2 2 0 0 1 17.6 16H8.1a2 2 0 0 1-2-1.6L4 3.8A1 1 0 0 0 3 3H2V1h1a3 3 0 0 1 2.9 2.4Z"/>
+              </svg>
+              <p>Корзина пуста. Добавьте товары из каталога.</p>
+              <a class="link" href="#catalog">Перейти к каталогу</a>
+            </div>
+            <ul class="cart__list" id="cart-list"></ul>
+            <div class="cart__footer" id="cart-footer" hidden>
+              <span>Итого к оплате:</span>
+              <strong class="cart__total" id="cart-total">0 ₽</strong>
+            </div>
+          </div>
+
+          <form class="order-form" id="order-form" novalidate aria-labelledby="form-title">
+            <h3 class="block-title" id="form-title">Данные покупателя</h3>
+
+            <div class="field">
+              <label class="field__label" for="childName">ФИ ребёнка <span class="req" aria-hidden="true">*</span></label>
+              <input class="field__input" id="childName" name="childName" type="text" maxlength="100"
+                     autocomplete="off" required aria-describedby="childName-error" placeholder="Например: Иванова Анна">
+              <p class="field__error" id="childName-error" data-error-for="childName"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="branch">Филиал (где занимается ребёнок) <span class="req" aria-hidden="true">*</span></label>
+              <select class="field__input" id="branch" name="branch" required aria-describedby="branch-error">
+                <option value="" disabled selected>Выберите филиал...</option>
+              </select>
+              <p class="field__error" id="branch-error" data-error-for="branch"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="phone">Номер телефона родителя <span class="req" aria-hidden="true">*</span></label>
+              <input class="field__input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
+                     required aria-describedby="phone-error" placeholder="+7 (999) 000-00-00">
+              <p class="field__error" id="phone-error" data-error-for="phone"></p>
+            </div>
+
+            <div class="field field--check">
+              <label class="check">
+                <input type="checkbox" id="consent" name="consent" required aria-describedby="consent-error">
+                <span>Я согласен(на) на обработку персональных данных
+                  (<a class="link" href="#" data-policy-link>политика конфиденциальности</a>)</span>
+              </label>
+              <p class="field__error" id="consent-error" data-error-for="consent"></p>
+            </div>
+
+            <!-- Ловушка для ботов (NFR-17): люди это поле не видят и не заполняют -->
+            <div class="hp" aria-hidden="true">
+              <label for="website">Не заполняйте это поле</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="submit-error" id="submit-error" role="alert" hidden>
+              <p data-error-text></p>
+              <button type="button" class="btn btn--outline" id="retry-btn">Повторить</button>
+            </div>
+
+            <button type="submit" class="btn btn--accent btn--block" id="submit-btn" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span data-submit-label>Оформить заказ</span>
+            </button>
+            <p class="form-note">Администратор клуба свяжется с вами для подтверждения заказа</p>
+          </form>
         </div>
       </div>
-
-      <form class="panel order-form" id="order-form" novalidate aria-labelledby="form-title">
-        <h2 class="section-title" id="form-title">Данные для заказа</h2>
-
-        <div class="field">
-          <label class="field__label" for="childName">Фамилия и имя ребёнка</label>
-          <input class="field__input" id="childName" name="childName" type="text" maxlength="100"
-                 autocomplete="off" required aria-describedby="childName-error" placeholder="Иванова Мария">
-          <p class="field__error" id="childName-error" data-error-for="childName"></p>
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="phone">Номер телефона родителя</label>
-          <input class="field__input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
-                 required aria-describedby="phone-error" placeholder="+7 (___) ___-__-__">
-          <p class="field__error" id="phone-error" data-error-for="phone"></p>
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="branch">Филиал</label>
-          <select class="field__input" id="branch" name="branch" required aria-describedby="branch-error">
-            <option value="" disabled selected>Выберите филиал...</option>
-          </select>
-          <p class="field__error" id="branch-error" data-error-for="branch"></p>
-        </div>
-
-        <div class="field field--check">
-          <label class="check">
-            <input type="checkbox" id="consent" name="consent" required aria-describedby="consent-error">
-            <span>Я согласен(на) на обработку персональных данных
-              (<a class="link" href="#" data-policy-link>политика конфиденциальности</a>)</span>
-          </label>
-          <p class="field__error" id="consent-error" data-error-for="consent"></p>
-        </div>
-
-        <!-- Ловушка для ботов (NFR-17): люди это поле не видят и не заполняют -->
-        <div class="hp" aria-hidden="true">
-          <label for="website">Не заполняйте это поле</label>
-          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-        </div>
-
-        <div class="submit-error" id="submit-error" role="alert" hidden>
-          <p data-error-text></p>
-          <button type="button" class="btn btn--outline" id="retry-btn">Повторить</button>
-        </div>
-
-        <button type="submit" class="btn btn--accent btn--block" id="submit-btn" disabled>
-          <span class="spinner" aria-hidden="true"></span>
-          <span data-submit-label>Оформить заказ</span>
-        </button>
-      </form>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container footer__inner">
-      <a class="footer__link" href="https://skazka-ufa.ru/" target="_blank" rel="noopener">skazka-ufa.ru</a>
-      <p>© <span id="year"></span> СКАЗКА — спортивный клуб эстетической гимнастики</p>
+      <img class="footer__logo" src="images/logo.png" alt="" width="44" height="44" onerror="this.hidden=true">
+      <div>
+        <a class="footer__link" href="https://skazka-ufa.ru/" target="_blank" rel="noopener">skazka-ufa.ru</a>
+        <p>© <span id="year"></span> СКАЗКА — спортивный клуб эстетической гимнастики</p>
+      </div>
     </div>
   </footer>
 
