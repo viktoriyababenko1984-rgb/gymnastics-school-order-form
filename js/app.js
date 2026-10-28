@@ -285,14 +285,19 @@
       s.total !== s.clientTotal
         ? el('p', { className: 'confirm__note', text: 'Сумма пересчитана по актуальным ценам' })
         : null,
-      el('p', { text: `Администратор клуба свяжется с вами по телефону ${s.phone}` }),
+      el(
+        'p',
+        { className: 'confirm__sms' },
+        'Когда менеджер соберёт ваш заказ, вам придёт SMS-уведомление на номер ',
+        el('span', { className: 'nowrap', text: s.phone }),
+      ),
     ];
     body.replaceChildren(...parts.filter(Boolean));
     lastFocus = document.activeElement;
     modal.hidden = false;
     document.body.classList.add('no-scroll');
     document.getElementById('confirm-close').focus();
-    announce('Спасибо! Заказ принят');
+    announce('Ваш заказ принят. Когда менеджер соберёт заказ, вам придёт SMS-уведомление');
   }
 
   function closeConfirmation() {

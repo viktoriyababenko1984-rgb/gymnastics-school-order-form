@@ -401,6 +401,8 @@ select.field__input {
 .confirm__list { margin: 4px 0 10px; padding: 12px 12px 12px 30px; background: var(--blue-mist); border-radius: var(--radius-sm); font-size: 14px; }
 .confirm__total { font-size: 18px; }
 .confirm__total strong { color: var(--blue-deep); }
+.confirm__sms { margin-top: 12px !important; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--blue-soft); font-weight: 600; color: var(--blue-ink); }
+.nowrap { white-space: nowrap; }
 .confirm__note { color: var(--pink-dark); font-size: 14px; }
 
 /* ---------- Тост ---------- */
