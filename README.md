@@ -17,6 +17,7 @@ js/app.js         — рендер каталога и корзины, окно 
 images/           — logo.png, 1.jpg … 13.jpg, placeholder.svg
 apps-script/Code.gs — серверная часть (Google Apps Script)
 tools/prepare_images.py — подготовка картинок из папки Google Drive
+crm-report/        — ежемесячный отчёт по спортсменам из CRM (отдельный Apps Script, см. crm-report/README.md)
 ```
 
 ## Запуск
