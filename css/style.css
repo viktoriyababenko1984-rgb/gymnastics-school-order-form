@@ -403,6 +403,7 @@ select.field__input {
 .confirm__total strong { color: var(--blue-deep); }
 .confirm__sms { margin-top: 12px !important; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--blue-soft); font-weight: 600; color: var(--blue-ink); }
 .nowrap { white-space: nowrap; }
+.confirm__sign { display: block; margin-top: 8px; font-weight: 700; color: var(--blue-deep); }
 .confirm__note { color: var(--pink-dark); font-size: 14px; }
 
 /* ---------- Тост ---------- */

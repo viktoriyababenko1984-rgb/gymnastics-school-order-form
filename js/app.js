@@ -288,8 +288,9 @@
       el(
         'p',
         { className: 'confirm__sms' },
-        'Когда менеджер соберёт ваш заказ, вам придёт SMS-уведомление на номер ',
-        el('span', { className: 'nowrap', text: s.phone }),
+        'Когда менеджер Олеся соберёт ваш заказ, вам придёт SMS-уведомление с её номера ',
+        el('span', { className: 'nowrap', text: '+7 927 636 68 00' }),
+        el('span', { className: 'confirm__sign', text: 'С любовью, СК «Сказка» 💙' }),
       ),
     ];
     body.replaceChildren(...parts.filter(Boolean));
@@ -297,7 +298,7 @@
     modal.hidden = false;
     document.body.classList.add('no-scroll');
     document.getElementById('confirm-close').focus();
-    announce('Ваш заказ принят. Когда менеджер соберёт заказ, вам придёт SMS-уведомление');
+    announce('Ваш заказ принят. Когда менеджер Олеся соберёт ваш заказ, вам придёт SMS-уведомление с её номера +7 927 636 68 00');
   }
 
   function closeConfirmation() {
