@@ -2,9 +2,10 @@
  * СКАЗКА — приём заказов магазина в Google Таблицу «Форма заявки».
  * ТЗ, раздел 6. Вставляется в «Расширения → Apps Script» этой таблицы.
  *
- * Лист «Лист1», СТРОГИЙ порядок колонок A–I:
- *   A Дата | B Филиал | C ФИ ребенка | D Наименование товара | E Размер |
- *   F Кол-во | G Цена | H Номер телефона родителя | I Сумма
+ * Лист «Лист1». Скрипт находит нужные колонки ПО НАЗВАНИЯМ ЗАГОЛОВКОВ в первой строке
+ * (см. FIELDS ниже), поэтому колонки можно переставлять и добавлять новые — скрипт
+ * пишет только в свои 9 колонок и не трогает остальные (например, «Месяц цифрой»
+ * с формулой, «Дата оплаты», «Дата выдачи»). Переименовывать эти 9 заголовков нельзя.
  * Одна строка = одна позиция заказа.
  *
  * Настройка: один раз запустить setup() из редактора, затем
@@ -15,8 +16,18 @@ const SPREADSHEET_ID = '1CWMFQgbCeBuL-IMDX9UCMELKZDcZUhWJ-qAF3TAyaqA'; // «Фо
 const SHEET_NAME = 'Лист1';
 const TIME_ZONE = 'Asia/Yekaterinburg'; // Уфа, GMT+5
 const DATE_FORMAT = 'dd.MM.yyyy HH:mm:ss';
-const HEADERS = ['Дата', 'Филиал', 'ФИ ребенка', 'Наименование товара', 'Размер',
-  'Кол-во', 'Цена', 'Номер телефона родителя', 'Сумма'];
+// Колонки, в которые пишет скрипт: ключ → допустимые названия заголовка в строке 1.
+const FIELDS = {
+  date: ['Дата заказа', 'Дата'],
+  branch: ['Филиал'],
+  child: ['ФИ ребенка', 'ФИ ребёнка'],
+  product: ['Наименование товара'],
+  size: ['Размер'],
+  qty: ['Кол-во'],
+  price: ['Цена'],
+  phone: ['Номер телефона родителя'],
+  sum: ['Сумма'],
+};
 const MAX_QTY = 10;
 const MAX_ITEMS = 50;
 const DEDUP_TTL_SEC = 21600; // 6 часов — максимум CacheService
@@ -85,34 +96,42 @@ function doPost(e) {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
     if (!sheet) throw new Error('Лист «' + SHEET_NAME + '» не найден');
 
+    const cols = findColumns(sheet); // { date: 1, branch: 3, ... } — номера колонок по заголовкам
+
     const now = new Date();
     const c = data.customer;
     const childName = normalizeName(c.childName);
 
-    // СТРОГИЙ ПОРЯДОК КОЛОНОК A–I (ТЗ, раздел 6.3)
     const rows = mergeItems(data.items).map(function (it) {
       const p = CATALOG[it.productId];
       const price = it.discount ? p.discount.price : p.price;
-      const sizeCell = it.discount ? p.discount.label : it.size ? "'" + it.size : '—';
-      return [
-        now,                              // A Дата
-        c.branch,                         // B Филиал
-        safe(childName),                  // C ФИ ребенка
-        p.name,                           // D Наименование товара
-        sizeCell,                         // E Размер (текстом, чтобы не стал датой) / пометка льготы
-        it.qty,                           // F Кол-во
-        price,                            // G Цена (за единицу)
-        "'" + c.phone,                    // H Номер телефона родителя
-        price * it.qty,                   // I Сумма (Кол-во × Цена)
-      ];
+      return {
+        date: now,
+        branch: c.branch,
+        child: safe(childName),
+        product: p.name,
+        size: it.discount ? p.discount.label : it.size ? "'" + it.size : '—', // текстом, чтобы «104-110» не стал датой
+        qty: it.qty,
+        price: price,                    // цена за единицу
+        phone: "'" + c.phone,            // текстом, чтобы номер не стал числом
+        sum: price * it.qty,             // Кол-во × Цена
+      };
     });
 
-    const startRow = sheet.getLastRow() + 1;
-    sheet.getRange(startRow, 1, rows.length, HEADERS.length).setValues(rows);
-    sheet.getRange(startRow, 1, rows.length, 1).setNumberFormat(DATE_FORMAT);
+    // Первая свободная строка — по колонке с датой (getLastRow() не подходит: формулы-массивы
+    // в других колонках, например «Месяц цифрой», «занимают» лист до самого низа).
+    const startRow = lastFilledRow(sheet, cols.date) + 1;
+    const endRow = startRow + rows.length - 1;
+    if (endRow > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), endRow - sheet.getMaxRows());
+
+    // Пишем каждое поле в свою колонку; чужие колонки не трогаем.
+    Object.keys(FIELDS).forEach(function (key) {
+      sheet.getRange(startRow, cols[key], rows.length, 1).setValues(rows.map(function (r) { return [r[key]]; }));
+    });
+    sheet.getRange(startRow, cols.date, rows.length, 1).setNumberFormat(DATE_FORMAT);
     SpreadsheetApp.flush();
 
-    const total = rows.reduce(function (s, r) { return s + r[8]; }, 0);
+    const total = rows.reduce(function (s, r) { return s + r.sum; }, 0);
     const result = { ok: true, total: total, rows: rows.length };
     cache.put(cacheKey, JSON.stringify(result), DEDUP_TTL_SEC);
     return json(result);
@@ -183,24 +202,53 @@ function mergeItems(items) {
   return order.map(function (k) { return map[k]; });
 }
 
+/** Номера колонок для каждого поля FIELDS по заголовкам первой строки. Нет заголовка — ошибка. */
+function findColumns(sheet) {
+  const header = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
+    .map(function (h) { return String(h).trim(); });
+  const cols = {};
+  const missing = [];
+  Object.keys(FIELDS).forEach(function (key) {
+    let idx = -1;
+    FIELDS[key].some(function (name) { idx = header.indexOf(name); return idx !== -1; });
+    if (idx === -1) missing.push('«' + FIELDS[key][0] + '»');
+    else cols[key] = idx + 1;
+  });
+  if (missing.length) throw new Error('В строке 1 не найдены заголовки: ' + missing.join(', '));
+  return cols;
+}
+
+/** Номер последней строки, где в колонке col есть значение (минимум 1 — строка заголовков). */
+function lastFilledRow(sheet, col) {
+  const last = sheet.getLastRow();
+  if (last < 2) return 1;
+  const values = sheet.getRange(2, col, last - 1, 1).getValues();
+  for (let i = values.length - 1; i >= 0; i--) {
+    if (values[i][0] !== '' && values[i][0] !== null) return i + 2;
+  }
+  return 1;
+}
+
 /**
- * Запускается ОДИН РАЗ вручную из редактора при настройке (ТЗ, раздел 6.6):
- * часовой пояс таблицы — Уфа, заголовок «Сумма» в I1.
+ * Запускается вручную из редактора при настройке (ТЗ, раздел 6.6):
+ * проверяет, что все нужные заголовки на месте, и ставит таблице часовой пояс Уфы.
  */
 function setup() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) throw new Error('Лист «' + SHEET_NAME + '» не найден');
 
-  const current = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
-  for (let i = 0; i < 8; i++) {
-    if (String(current[i]).trim() !== HEADERS[i]) {
-      throw new Error('Колонка ' + (i + 1) + ': ожидается «' + HEADERS[i] + '», в таблице «' + current[i] + '». Ничего не изменено.');
-    }
-  }
+  const cols = findColumns(sheet); // бросит ошибку, если какого-то заголовка нет
   ss.setSpreadsheetTimeZone(TIME_ZONE);
-  if (!current[8]) sheet.getRange(1, 9).setValue('Сумма');
-  console.log('Готово: часовой пояс ' + ss.getSpreadsheetTimeZone() + ', I1 = «' + sheet.getRange(1, 9).getValue() + '»');
+  console.log('Готово: часовой пояс ' + ss.getSpreadsheetTimeZone() + '. Колонки: ' +
+    Object.keys(cols).map(function (k) { return FIELDS[k][0] + ' → ' + columnLetter(cols[k]); }).join(', ') +
+    '. Первая свободная строка: ' + (lastFilledRow(sheet, cols.date) + 1));
+}
+
+function columnLetter(n) {
+  let s = '';
+  for (; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s;
+  return s;
 }
 
 function normalizeName(v) {
