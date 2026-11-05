@@ -370,6 +370,8 @@ select.field__input {
 .footer__inner p { margin: 2px 0 0; }
 .footer__logo { flex: none; border-radius: 50%; background: var(--white); }
 .footer__link { color: var(--white); font-weight: 700; }
+.footer__policy { display: inline-block; margin-top: 6px; color: #C7DDE8; text-decoration: underline; text-underline-offset: 3px; }
+.footer__policy:hover { color: var(--white); }
 
 /* ---------- Модальное окно ---------- */
 

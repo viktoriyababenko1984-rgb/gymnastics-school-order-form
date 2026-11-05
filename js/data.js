@@ -7,7 +7,7 @@
   const API_URL = 'https://script.google.com/macros/s/AKfycby0xSvcSB0m2wvJkHmZUmVZB-7fNg1dvdqmXlRKz3SiwED6p1pX6IhiSnstNik8vLHBqw/exec';
 
   // Ссылка на политику обработки персональных данных (ТЗ, раздел 12). Пусто — выводится текст без ссылки.
-  const POLICY_URL = '';
+  const POLICY_URL = 'https://skazka-ufa.ru/privacy';
 
   const PRODUCTS = [
     { id: 1, name: 'Лонгслив детский черный «Сказка»', price: 1950,
