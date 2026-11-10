@@ -55,7 +55,7 @@ const CATALOG = {
   9: { name: 'Бутылочка для воды «Сказка» 400 мл', price: 790, sizes: [] },
   10: { name: 'Скакалка 3 метра', price: 590, sizes: [] },
   11: { name: 'Футболка белая оверсайз «Love gymnastics»', price: 2000, sizes: ['L (48-50)'] },
-  12: { name: 'Худи синий «Love gymnastics»', price: 4850, sizes: ['Мини-оверсайз', 'Макси-оверсайз'] },
+  12: { name: 'Худи синий «Love gymnastics»', price: 4050, sizes: ['Мини-оверсайз', 'Макси-оверсайз'] }, // со скидкой (было 4500)
   13: { name: 'Брюки женские синие «Love gymnastics»', price: 3300, sizes: ['S', 'M', 'L'] },
 };
 

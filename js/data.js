@@ -30,9 +30,10 @@
     { id: 9, name: 'Бутылочка для воды «Сказка» 400 мл', price: 790, sizes: [] },
     { id: 10, name: 'Скакалка 3 метра', price: 590, sizes: [] },
     { id: 11, name: 'Футболка белая оверсайз «Love gymnastics»', price: 2000, sizes: ['L (48-50)'] },
-    { id: 12, name: 'Худи синий «Love gymnastics»', price: 4850, sizes: ['Мини-оверсайз', 'Макси-оверсайз'] },
+    // Продаётся со скидкой: oldPrice показывается зачёркнутой, в заказ идёт price
+    { id: 12, name: 'Худи синий «Love gymnastics»', price: 4050, oldPrice: 4500, sizes: ['Мини-оверсайз', 'Макси-оверсайз'] },
     { id: 13, name: 'Брюки женские синие «Love gymnastics»', price: 3300, sizes: ['S', 'M', 'L'] },
-  ].map((p) => Object.freeze({ ...p, sizes: Object.freeze(p.sizes), discount: p.discount || null, image: `images/${p.id}.jpg` }));
+  ].map((p) => Object.freeze({ ...p, sizes: Object.freeze(p.sizes), discount: p.discount || null, oldPrice: p.oldPrice || null, image: `images/${p.id}.jpg` }));
 
   // Названия и адреса — из документа заказчика «Названия филиалов» (Google Drive).
   // В таблицу заявок (колонка «Филиал») пишется только название.

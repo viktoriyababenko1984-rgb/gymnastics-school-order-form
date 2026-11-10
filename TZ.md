@@ -235,7 +235,7 @@ const PRODUCTS = [
   { id: 10, name: 'Скакалка 3 метра', price: 590, sizes: [] },
   { id: 11, name: 'Футболка белая оверсайз «Love gymnastics»', price: 2000,
     sizes: ['L (48-50)'] },
-  { id: 12, name: 'Худи синий «Love gymnastics»', price: 4850,
+  { id: 12, name: 'Худи синий «Love gymnastics»', price: 4050, oldPrice: 4500, // скидка 10%: на карточке 4 500 ₽ зачёркнута, в заказ и таблицу идёт 4 050 ₽
     sizes: ['Мини-оверсайз', 'Макси-оверсайз'] },
   { id: 13, name: 'Брюки женские синие «Love gymnastics»', price: 3300,
     sizes: ['S', 'M', 'L'] },

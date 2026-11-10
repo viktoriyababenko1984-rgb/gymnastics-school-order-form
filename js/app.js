@@ -107,6 +107,14 @@
 
     // Цена и (для стартового набора) льготное условие
     const priceEl = el('p', { className: 'card__price' }, el('span', { className: 'card__price-now', text: formatPrice(p.price) }));
+    // Товар со скидкой: старая цена зачёркнута, новая — розовым, на фото метка «−10%»
+    let saleBadge = null;
+    if (p.oldPrice && p.oldPrice > p.price) {
+      priceEl.classList.add('is-promo');
+      priceEl.append(el('s', { className: 'card__price-old', text: formatPrice(p.oldPrice) }));
+      const percent = Math.round((1 - p.price / p.oldPrice) * 100);
+      saleBadge = el('span', { className: 'card__sale', text: `−${percent}%`, 'aria-label': `Скидка ${percent}%` });
+    }
     let promo = null;
     let promoBox = null;
     if (p.discount) {
@@ -158,7 +166,7 @@
     return el(
       'article',
       { className: 'card' },
-      el('div', { className: 'card__media' }, productImage(p, 'card__img')),
+      el('div', { className: 'card__media' }, productImage(p, 'card__img'), saleBadge),
       el(
         'div',
         { className: 'card__body' },
